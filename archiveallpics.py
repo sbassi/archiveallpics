@@ -47,6 +47,6 @@ print([len(file_bins[x]) for x in file_bins])
 print(i)
 
 
-export AWS_ACCESS_KEY=AKIAVAJ6QXZZ5RPI4EMH
-export AWS_SECRET_KEY=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
-export AWS_DEFAULT_REGION=us-east-1
+#export AWS_ACCESS_KEY=
+#export AWS_SECRET_KEY=
+#export AWS_DEFAULT_REGION=us-east-1
