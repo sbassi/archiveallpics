@@ -7,40 +7,40 @@ import tarfile
 
 import exifread
 
+INPUT_DIR = '**/../../../Documents/vikifotos/*'
+#INPUT_DIR = '/Users/t_basss/Documents/vikifotos/*'
 
 file_bins = {}
 
 p = Path(Path.cwd())
 
-for i, child in enumerate(p.glob('**/../../Pictures/*')):
+# '**/../../Pictures/*'
+
+for i, child in enumerate(p.glob(INPUT_DIR)):
     if child.is_file() and not child.name.endswith('.xmp'):
         with open(child, 'rb') as fh:
-            #print(child)
             tags = exifread.process_file(fh, stop_tag="EXIF DateTimeOriginal")
             try:
                 dateTaken = tags["EXIF DateTimeOriginal"]
-                #import pdb; pdb.set_trace()
                 year = dateTaken.values.split(":")[0]
                 month = dateTaken.values.split(":")[1]
                 yearmonth = '{}-{}'.format(year, month)
             except KeyError:
                 # NO EXIF
                 yearmonth = 'NODATA'
-        #when = os.stat(child).st_ctime
-        #year = time.ctime(when).split()[-1]
-        #month = time.ctime(when).split()[1]
-        #yearmonth = '{}-{}'.format(year, month)
+                # USE VALUES IN FS get year/month
+                date_taken = os.path.getmtime(child)
+                yearmonth = time.strftime('%Y-%m', time.localtime(date_taken))
         if yearmonth in file_bins:
             file_bins[yearmonth].append(child)
         else:
             file_bins[yearmonth] = [child]
 
-
 # Make tar
 for key in file_bins:
-    tar = tarfile.open(key+'.tar', "w")
+    tar = tarfile.open(key + '.tar', "w")
     for item in file_bins[key]:
-        tar.add(item)
+        tar.add(item.resolve())
     tar.close()
 
 print([len(file_bins[x]) for x in file_bins])
